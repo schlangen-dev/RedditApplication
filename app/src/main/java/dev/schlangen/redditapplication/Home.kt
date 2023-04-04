@@ -2,6 +2,7 @@ package dev.schlangen.redditapplication
 
 import android.text.Layout
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -22,19 +23,26 @@ fun Home(viewModel: HomeViewModel = HomeViewModel()) {
     val viewState by viewModel.state.collectAsState()
 
     Surface(Modifier.fillMaxSize()) {
-        Column(Modifier.fillMaxWidth()) {
-            val counterText = "Count: ${viewState.count}"
-            Text(text = counterText,
-                fontSize = 20.sp,
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(all = 20.dp))
-            Box(Modifier
-                    .background(color = Color.LightGray)
-                    .align(Alignment.CenterHorizontally)) {
-                Text("Update",
-                    modifier = Modifier.padding(all = 20.dp))
-            }
+        HomeContent(onIncrementCount = viewModel::onIncrementCount, count = viewState.count)
+    }
+}
+
+@Composable
+fun HomeContent(onIncrementCount: (Int) -> Unit, count: Int) {
+    Column(Modifier.fillMaxWidth()) {
+        val counterText = "Count: ${count}"
+        Text(text = counterText,
+            fontSize = 20.sp,
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .padding(all = 20.dp))
+        Box(
+            Modifier
+                .background(color = Color.LightGray)
+                .align(Alignment.CenterHorizontally)
+                .clickable { onIncrementCount(1)} ) {
+            Text("Update",
+                modifier = Modifier.padding(all = 20.dp))
         }
     }
 }
