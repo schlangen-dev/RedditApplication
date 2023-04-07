@@ -5,10 +5,12 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-class HomeViewModel() : ViewModel() {
+class HomeViewModel(private val mealAccessor: MealAccessor) : ViewModel() {
+
+
 
     private val counter = MutableStateFlow(0)
-    private val meals = MutableStateFlow(listOf("Burger", "Pizza"))
+    private val meals = MutableStateFlow(emptyList<String>())
 
     // Hold onto view state and emits updates when _state.value is updated
     // See: https://developer.android.com/kotlin/flow/stateflow-and-sharedflow
@@ -24,7 +26,7 @@ class HomeViewModel() : ViewModel() {
                 counter,
                 meals
             ) { counter, meals ->
-                HomeViewState(count = counter)
+                HomeViewState(count = counter, meals = meals)
             }.catch { throwable ->
                 // TODO: handle issues?
                 throw throwable
@@ -40,9 +42,17 @@ class HomeViewModel() : ViewModel() {
             counter.value += amount;
         }
     }
+
+    fun onRefreshMeals() {
+        println("onRefreshMeals")
+        viewModelScope.launch {
+            meals.value = mealAccessor.getRandomMeals()
+        }
+    }
 }
 
 // Data classes in kotlin: https://kotlinlang.org/docs/data-classes.html
 data class HomeViewState(
-    val count: Int = 0
+    val count: Int = 0,
+    val meals: List<String> = emptyList()
 )

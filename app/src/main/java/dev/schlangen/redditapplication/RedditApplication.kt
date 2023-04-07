@@ -10,7 +10,7 @@ import dev.schlangen.redditapplication.ui.theme.RedditApplicationTheme
 fun RedditApplication(appContainer: AppContainer) {
     RedditApplicationTheme {
         // A surface container using the 'background' color from the theme
-        Home(viewModel = HomeViewModel())
+        Home(viewModel = HomeViewModel(mealAccessor = appContainer.mealAccessor))
     }
 }
 

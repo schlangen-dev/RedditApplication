@@ -18,17 +18,24 @@ import androidx.compose.ui.unit.sp
 import dev.schlangen.redditapplication.data.HomeViewModel
 
 @Composable
-fun Home(viewModel: HomeViewModel = HomeViewModel()) {
+fun Home(viewModel: HomeViewModel) {
 
     val viewState by viewModel.state.collectAsState()
 
     Surface(Modifier.fillMaxSize()) {
-        HomeContent(onIncrementCount = viewModel::onIncrementCount, count = viewState.count)
+        HomeContent(
+            onIncrementCount = viewModel::onIncrementCount,
+            onRefreshMeals = viewModel::onRefreshMeals,
+            count = viewState.count,
+            meals = viewState.meals)
     }
 }
 
 @Composable
-fun HomeContent(onIncrementCount: (Int) -> Unit, count: Int) {
+fun HomeContent(onIncrementCount: (Int) -> Unit,
+                onRefreshMeals: () -> Unit,
+                count: Int,
+                meals: List<String>) {
     Column(Modifier.fillMaxWidth()) {
         val counterText = "Count: ${count}"
         Text(text = counterText,
@@ -40,9 +47,24 @@ fun HomeContent(onIncrementCount: (Int) -> Unit, count: Int) {
             Modifier
                 .background(color = Color.LightGray)
                 .align(Alignment.CenterHorizontally)
-                .clickable { onIncrementCount(1)} ) {
+                .clickable { onIncrementCount(1) } ) {
             Text("Update",
                 modifier = Modifier.padding(all = 20.dp))
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        Box(
+            Modifier
+                .background(color = Color.LightGray)
+                .align(Alignment.CenterHorizontally)
+                .clickable { onRefreshMeals() } ) {
+            Text("New meals",
+                modifier = Modifier.padding(all = 20.dp))
+        }
+        meals.forEach{
+                meal -> Text(text = meal,
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
+                            .padding(all = 20.dp))
         }
     }
 }
