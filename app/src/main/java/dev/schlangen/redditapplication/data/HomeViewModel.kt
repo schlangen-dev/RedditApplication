@@ -46,7 +46,9 @@ class HomeViewModel(private val mealAccessor: MealAccessor) : ViewModel() {
     fun onRefreshMeals() {
         println("onRefreshMeals")
         viewModelScope.launch {
-            meals.value = mealAccessor.getRandomMeals()
+            runCatching {
+                meals.value = mealAccessor.getRandomMeals()
+            }
         }
     }
 }
