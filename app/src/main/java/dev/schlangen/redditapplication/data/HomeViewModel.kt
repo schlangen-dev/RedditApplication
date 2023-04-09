@@ -2,15 +2,16 @@ package dev.schlangen.redditapplication.data
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import java.util.prefs.AbstractPreferences
 
 class HomeViewModel(private val mealAccessor: MealAccessor) : ViewModel() {
 
-
-
     private val counter = MutableStateFlow(0)
     private val meals = MutableStateFlow(emptyList<String>())
+    private val preferences = MutableStateFlow(listOf("dessert"))
 
     // Hold onto view state and emits updates when _state.value is updated
     // See: https://developer.android.com/kotlin/flow/stateflow-and-sharedflow
@@ -24,9 +25,14 @@ class HomeViewModel(private val mealAccessor: MealAccessor) : ViewModel() {
         viewModelScope.launch {
             combine(
                 counter,
-                meals
-            ) { counter, meals ->
-                HomeViewState(count = counter, meals = meals)
+                meals,
+                preferences
+            ) { counter, meals, preferences ->
+                HomeViewState(
+                    count = counter,
+                    meals = meals,
+                    preferences = preferences
+                )
             }.catch { throwable ->
                 // TODO: handle issues?
                 throw throwable
@@ -45,9 +51,9 @@ class HomeViewModel(private val mealAccessor: MealAccessor) : ViewModel() {
 
     fun onRefreshMeals() {
         println("onRefreshMeals")
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             runCatching {
-                meals.value = mealAccessor.getRandomMeals()
+                meals.value = mealAccessor.getRandomMeals(state.value.preferences)
             }
         }
     }
@@ -55,6 +61,9 @@ class HomeViewModel(private val mealAccessor: MealAccessor) : ViewModel() {
 
 // Data classes in kotlin: https://kotlinlang.org/docs/data-classes.html
 data class HomeViewState(
+    // TODO: default values are redundant with definition for StateFlows above
     val count: Int = 0,
-    val meals: List<String> = emptyList()
+    val meals: List<String> = emptyList(),
+    // TODO: control via UI checkboxes
+    val preferences: List<String> = listOf("dessert")
 )
