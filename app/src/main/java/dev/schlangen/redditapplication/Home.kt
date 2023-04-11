@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import dev.schlangen.redditapplication.data.HomeViewModel
+import dev.schlangen.redditapplication.data.Recipe
 
 @Composable
 fun Home(viewModel: HomeViewModel) {
@@ -27,7 +28,7 @@ fun Home(viewModel: HomeViewModel) {
             onIncrementCount = viewModel::onIncrementCount,
             onRefreshMeals = viewModel::onRefreshMeals,
             count = viewState.count,
-            meals = viewState.meals)
+            recipe = viewState.recipe)
     }
 }
 
@@ -35,7 +36,8 @@ fun Home(viewModel: HomeViewModel) {
 fun HomeContent(onIncrementCount: (Int) -> Unit,
                 onRefreshMeals: () -> Unit,
                 count: Int,
-                meals: List<String>) {
+                recipe: Recipe
+) {
     Column(Modifier.fillMaxWidth()) {
         val counterText = "Count: ${count}"
         Text(text = counterText,
@@ -60,11 +62,13 @@ fun HomeContent(onIncrementCount: (Int) -> Unit,
             Text("New meals",
                 modifier = Modifier.padding(all = 20.dp))
         }
-        meals.forEach{
-                meal -> Text(text = meal,
-                        modifier = Modifier
-                            .align(Alignment.CenterHorizontally)
-                            .padding(all = 20.dp))
-        }
+
+        // TODO: move into a new component
+        Text(
+            text = recipe.title.orEmpty(),
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .padding(all = 20.dp)
+        )
     }
 }

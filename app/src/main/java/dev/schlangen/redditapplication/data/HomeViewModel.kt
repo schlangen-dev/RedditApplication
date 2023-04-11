@@ -10,7 +10,7 @@ import java.util.prefs.AbstractPreferences
 class HomeViewModel(private val mealAccessor: MealAccessor) : ViewModel() {
 
     private val counter = MutableStateFlow(0)
-    private val meals = MutableStateFlow(emptyList<String>())
+    private val recipe = MutableStateFlow(Recipe())
     private val preferences = MutableStateFlow(listOf("dessert"))
 
     // Hold onto view state and emits updates when _state.value is updated
@@ -25,12 +25,12 @@ class HomeViewModel(private val mealAccessor: MealAccessor) : ViewModel() {
         viewModelScope.launch {
             combine(
                 counter,
-                meals,
+                recipe,
                 preferences
-            ) { counter, meals, preferences ->
+            ) { counter, recipe, preferences ->
                 HomeViewState(
                     count = counter,
-                    meals = meals,
+                    recipe = recipe,
                     preferences = preferences
                 )
             }.catch { throwable ->
@@ -53,7 +53,7 @@ class HomeViewModel(private val mealAccessor: MealAccessor) : ViewModel() {
         println("onRefreshMeals")
         viewModelScope.launch(Dispatchers.IO) {
             runCatching {
-                meals.value = mealAccessor.getRandomMeals(state.value.preferences)
+                recipe.value = mealAccessor.getRandomRecipe(state.value.preferences)
             }
         }
     }
@@ -63,7 +63,7 @@ class HomeViewModel(private val mealAccessor: MealAccessor) : ViewModel() {
 data class HomeViewState(
     // TODO: default values are redundant with definition for StateFlows above
     val count: Int = 0,
-    val meals: List<String> = emptyList(),
+    val recipe: Recipe = Recipe(),
     // TODO: control via UI checkboxes
     val preferences: List<String> = listOf("dessert")
 )

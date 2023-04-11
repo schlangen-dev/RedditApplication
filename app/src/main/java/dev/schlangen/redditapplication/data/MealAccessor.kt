@@ -1,9 +1,10 @@
 package dev.schlangen.redditapplication.data
 
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.withTimeout
+import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import org.json.JSONObject
+
 
 class MealAccessor() {
 
@@ -13,16 +14,14 @@ class MealAccessor() {
     val COMMA_HEX = "%2C"
 
 
-    suspend fun getRandomMeals(currentTags: List<String>) : List<String> {
+    suspend fun getRandomRecipe(currentTags: List<String>) : Recipe {
         println("getRandomMeals()")
-        // Should be ready for a real async api cal
-        delay(3000)
-        val client = OkHttpClient()
 
+        val client = OkHttpClient()
         val tagsString = currentTags.joinToString(separator = COMMA_HEX);
+
         println("current tags $currentTags")
         println("tagsString $tagsString")
-
 
         val request = Request.Builder()
             .url("$API_URL?apiKey=$API_KEY&tags=$tagsString")
@@ -30,15 +29,20 @@ class MealAccessor() {
             .build()
 
         println("getRandomMeals request: $request")
-        val response = client.newCall(request).execute()
-        println("getRandomMeals response: $response")
+        client.newCall(request).execute().use {response ->
+            val bodyString: String? = response.body?.string()
+            println("response body: $bodyString")
 
-        // TODO: NEXT - process the response and return it.
-        // New plan is to generate random recipe info based on user preferences (tags)
-        if (response.isSuccessful) {
-            return listOf("Burger", "Pizza", "Pasta", "Curry", "Tacos")
+            val jsonObject = JSONObject(bodyString)
+            val recipesJson = jsonObject.getJSONArray("recipes")
+            val recipeJson = recipesJson.get(0)
+
+            val recipe: Recipe = GsonBuilder()
+                .excludeFieldsWithoutExposeAnnotation()
+                .create()
+                .fromJson(recipeJson.toString(), Recipe::class.java)
+            println("recipe: $recipe")
+            return recipe
         }
-        return listOf("Burger", "Pizza", "Pasta")
     }
-
 }
