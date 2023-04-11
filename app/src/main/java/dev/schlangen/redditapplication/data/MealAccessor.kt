@@ -12,16 +12,11 @@ class MealAccessor() {
     val API_KEY = "95fb22c4ab654edbbd348da95cc6c498"
     val API_URL = "https://api.spoonacular.com/recipes/random"
     val COMMA_HEX = "%2C"
-
+    val client = OkHttpClient()
 
     suspend fun getRandomRecipe(currentTags: List<String>) : Recipe {
         println("getRandomMeals()")
-
-        val client = OkHttpClient()
         val tagsString = currentTags.joinToString(separator = COMMA_HEX);
-
-        println("current tags $currentTags")
-        println("tagsString $tagsString")
 
         val request = Request.Builder()
             .url("$API_URL?apiKey=$API_KEY&tags=$tagsString")
@@ -30,9 +25,8 @@ class MealAccessor() {
 
         println("getRandomMeals request: $request")
         client.newCall(request).execute().use {response ->
+            // TODO: Cleanup
             val bodyString: String? = response.body?.string()
-            println("response body: $bodyString")
-
             val jsonObject = JSONObject(bodyString)
             val recipesJson = jsonObject.getJSONArray("recipes")
             val recipeJson = recipesJson.get(0)
