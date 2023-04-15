@@ -15,8 +15,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import dev.schlangen.redditapplication.data.HomeViewModel
 import dev.schlangen.redditapplication.data.Recipe
+import dev.schlangen.redditapplication.ui.widgets.RecipeWidget
 
 @Composable
 fun Home(viewModel: HomeViewModel) {
@@ -36,7 +38,7 @@ fun Home(viewModel: HomeViewModel) {
 fun HomeContent(onIncrementCount: (Int) -> Unit,
                 onRefreshMeals: () -> Unit,
                 count: Int,
-                recipe: Recipe
+                recipe: Recipe?
 ) {
     Column(Modifier.fillMaxWidth()) {
         val counterText = "Count: ${count}"
@@ -59,16 +61,12 @@ fun HomeContent(onIncrementCount: (Int) -> Unit,
                 .background(color = Color.LightGray)
                 .align(Alignment.CenterHorizontally)
                 .clickable { onRefreshMeals() } ) {
-            Text("New meals",
+            Text("New Recipe",
                 modifier = Modifier.padding(all = 20.dp))
         }
-
-        // TODO: move into a new component
-        Text(
-            text = recipe.title.orEmpty(),
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(all = 20.dp)
-        )
+        Spacer(modifier = Modifier.height(16.dp))
+        if (recipe != null) {
+            RecipeWidget(recipe = recipe)
+        }
     }
 }
