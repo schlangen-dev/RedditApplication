@@ -1,17 +1,21 @@
 package dev.schlangen.redditapplication.data
 
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.toMutableStateMap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import java.util.prefs.AbstractPreferences
 
+@Stable
 class HomeViewModel(private val mealAccessor: MealAccessor) : ViewModel() {
 
-    private val counter = MutableStateFlow(0)
     private val recipe = MutableStateFlow(Recipe())
-    private val preferences = MutableStateFlow(listOf("dessert"))
+    private val isBreakfastChecked = MutableStateFlow(false)
+    private val isDessertChecked = MutableStateFlow(false)
+    private val isVegetarianChecked = MutableStateFlow(false)
+    private val isVeganChecked = MutableStateFlow(false)
 
     // Hold onto view state and emits updates when _state.value is updated
     // See: https://developer.android.com/kotlin/flow/stateflow-and-sharedflow
@@ -24,17 +28,21 @@ class HomeViewModel(private val mealAccessor: MealAccessor) : ViewModel() {
     init {
         viewModelScope.launch {
             combine(
-                counter,
                 recipe,
-                preferences
-            ) { counter, recipe, preferences ->
+                isBreakfastChecked,
+                isDessertChecked,
+                isVegetarianChecked,
+                isVeganChecked
+            ) { recipe, isBreakfastChecked, isDessertChecked, isVegetarianChecked, isVeganChecked ->
                 HomeViewState(
-                    count = counter,
                     recipe = recipe,
-                    preferences = preferences
+                    isBreakfastChecked = isBreakfastChecked,
+                    isDessertChecked = isDessertChecked,
+                    isVegetarianChecked = isVegetarianChecked,
+                    isVeganChecked = isVeganChecked
                 )
             }.catch { throwable ->
-                // TODO: handle issues?
+                println("Failed to combine the HomeViewState")
                 throw throwable
             }.collect {
                 _state.value = it
@@ -42,19 +50,43 @@ class HomeViewModel(private val mealAccessor: MealAccessor) : ViewModel() {
         }
     }
 
-    fun onIncrementCount(amount: Int) {
-        println("onIncrementCount");
-        viewModelScope.launch {
-            counter.value += amount;
-        }
-    }
-
     fun onRefreshMeals() {
         println("onRefreshMeals")
         viewModelScope.launch(Dispatchers.IO) {
             runCatching {
-                recipe.value = mealAccessor.getRandomRecipe(state.value.preferences)
+                val prefs = mapOf(
+                    "breakfast" to isBreakfastChecked.value,
+                    "dessert" to isDessertChecked.value,
+                    "vegetarian" to isVegetarianChecked.value,
+                    "vegan" to isVeganChecked.value
+                )
+                recipe.value = mealAccessor.getRandomRecipe(prefs)
             }
+        }
+    }
+
+    // TODO: move to a unified preference event handler
+    fun onBreakfastPreferenceClicked(checked: Boolean) {
+        viewModelScope.launch {
+            isBreakfastChecked.value = checked
+        }
+    }
+
+    fun onDessertPreferenceClicked(checked: Boolean) {
+        viewModelScope.launch {
+            isDessertChecked.value = checked
+        }
+    }
+
+    fun onVegetarionPreferenceClicked(checked: Boolean) {
+        viewModelScope.launch {
+            isVegetarianChecked.value = checked
+        }
+    }
+
+    fun onVeganPreferenceClicked(checked: Boolean) {
+        viewModelScope.launch {
+            isVeganChecked.value = checked
         }
     }
 }
@@ -62,8 +94,9 @@ class HomeViewModel(private val mealAccessor: MealAccessor) : ViewModel() {
 // Data classes in kotlin: https://kotlinlang.org/docs/data-classes.html
 data class HomeViewState(
     // TODO: default values are redundant with definition for StateFlows above
-    val count: Int = 0,
     val recipe: Recipe = Recipe(),
-    // TODO: control via UI checkboxes
-    val preferences: List<String> = listOf("dessert")
+    val isBreakfastChecked: Boolean = false,
+    val isDessertChecked: Boolean = false,
+    val isVegetarianChecked: Boolean = false,
+    val isVeganChecked: Boolean = false,
 )

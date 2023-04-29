@@ -14,9 +14,11 @@ class MealAccessor() {
     val COMMA_HEX = "%2C"
     val client = OkHttpClient()
 
-    suspend fun getRandomRecipe(currentTags: List<String>) : Recipe {
+    suspend fun getRandomRecipe(currentTags: Map<String, Boolean>) : Recipe {
         println("getRandomMeals()")
-        val tagsString = currentTags.joinToString(separator = COMMA_HEX);
+
+        val enabledTags = currentTags.filterValues { enabled -> enabled }
+        val tagsString = enabledTags.keys.toList().joinToString(separator = COMMA_HEX);
 
         val request = Request.Builder()
             .url("$API_URL?apiKey=$API_KEY&tags=$tagsString")
