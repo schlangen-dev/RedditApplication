@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.schlangen.redditapplication.data.HomeViewModel
 import dev.schlangen.redditapplication.data.Recipe
+import dev.schlangen.redditapplication.ui.theme.Purple40
 import dev.schlangen.redditapplication.ui.widgets.CheckboxWidget
 import dev.schlangen.redditapplication.ui.widgets.RecipeWidget
 
@@ -61,10 +62,7 @@ fun HomeContent(
                 .padding(all = 16.dp)
         )
         Spacer(modifier = Modifier.height(16.dp))
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .align(Alignment.CenterHorizontally)) {
+        Row(modifier = Modifier.align(Alignment.CenterHorizontally)) {
             CheckboxWidget(
                 checked = isBreakfastChecked,
                 title = "Breakfast",
@@ -78,7 +76,7 @@ fun HomeContent(
             )
         }
         Spacer(modifier = Modifier.height(16.dp))
-        Row() {
+        Row(modifier = Modifier.align(Alignment.CenterHorizontally)) {
             CheckboxWidget(
                 checked = isVegetarianChecked,
                 title = "Vegetarian",
@@ -91,14 +89,16 @@ fun HomeContent(
                 onCheckedChanged = { onVeganPrefChanged(it) }
             )
         }
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(36.dp))
         Box(
             Modifier
-                .background(color = Color.LightGray)
+                .background(color = Purple40)
                 .align(Alignment.CenterHorizontally)
                 .clickable { onRefreshMeals() } ) {
             Text("New Recipe",
-                modifier = Modifier.padding(all = 20.dp))
+                modifier = Modifier.padding(all = 20.dp),
+                color = Color.White
+            )
         }
         Spacer(modifier = Modifier.height(16.dp))
         if (recipe != null) {
