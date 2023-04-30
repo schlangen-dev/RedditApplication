@@ -56,7 +56,8 @@ fun HomeContent(
     println("HomeContent()")
     Column(Modifier.fillMaxWidth()) {
         Text(text = "Find a Recipe", fontSize = 36.sp,
-            modifier = Modifier.align(Alignment.CenterHorizontally)
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
                 .padding(all = 16.dp)
         )
         Spacer(modifier = Modifier.height(16.dp))
@@ -69,18 +70,21 @@ fun HomeContent(
                 title = "Breakfast",
                 onCheckedChanged = { onBreakfastPrefChanged(it) },
             )
+            Spacer(modifier = Modifier.width(16.dp))
             CheckboxWidget(
                 checked = isDessertChecked,
                 title = "Dessert",
                 onCheckedChanged = { onDessertPrefChanged(it) }
             )
         }
+        Spacer(modifier = Modifier.height(16.dp))
         Row() {
             CheckboxWidget(
                 checked = isVegetarianChecked,
                 title = "Vegetarian",
                 onCheckedChanged = { onVegetarianPrefChanged(it) }
             )
+            Spacer(modifier = Modifier.width(16.dp))
             CheckboxWidget(
                 checked = isVeganChecked,
                 title = "Vegan",
