@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 @Stable
 class HomeViewModel(private val mealAccessor: MealAccessor) : ViewModel() {
 
-    private val recipe = MutableStateFlow(Recipe())
+    private val recipe = MutableStateFlow<Recipe?>(null)
     private val isBreakfastChecked = MutableStateFlow(false)
     private val isDessertChecked = MutableStateFlow(false)
     private val isVegetarianChecked = MutableStateFlow(false)
@@ -94,7 +94,7 @@ class HomeViewModel(private val mealAccessor: MealAccessor) : ViewModel() {
 // Data classes in kotlin: https://kotlinlang.org/docs/data-classes.html
 data class HomeViewState(
     // TODO: default values are redundant with definition for StateFlows above
-    val recipe: Recipe = Recipe(),
+    val recipe: Recipe? = null,
     val isBreakfastChecked: Boolean = false,
     val isDessertChecked: Boolean = false,
     val isVegetarianChecked: Boolean = false,

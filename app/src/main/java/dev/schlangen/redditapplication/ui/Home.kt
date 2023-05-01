@@ -3,6 +3,9 @@ package dev.schlangen.redditapplication
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -55,7 +58,11 @@ fun HomeContent(
                 isVeganChecked: Boolean
 ) {
     println("HomeContent()")
-    Column(Modifier.fillMaxWidth()) {
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .verticalScroll(rememberScrollState())
+    ) {
         Text(text = "Find a Recipe", fontSize = 36.sp,
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
@@ -102,6 +109,8 @@ fun HomeContent(
         }
         Spacer(modifier = Modifier.height(16.dp))
         if (recipe != null) {
+            Divider()
+            Spacer(modifier = Modifier.height(16.dp))
             RecipeWidget(recipe = recipe)
         }
     }

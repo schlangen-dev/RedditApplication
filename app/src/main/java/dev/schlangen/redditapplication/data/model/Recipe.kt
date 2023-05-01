@@ -23,6 +23,8 @@ data class Recipe (
     @Expose(serialize = true, deserialize = true)
     val instructions: kotlin.String? = null,
     @Expose(serialize = true, deserialize = true)
+    val readyInMinutes: kotlin.Int? = null,
+    @Expose(serialize = true, deserialize = true)
     val ketogenic: kotlin.Boolean? = null,
     @Expose(serialize = true, deserialize = true)
     val vegan: kotlin.Boolean? = null,
