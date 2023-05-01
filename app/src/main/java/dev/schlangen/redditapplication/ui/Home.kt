@@ -1,10 +1,9 @@
 package dev.schlangen.redditapplication
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -18,7 +17,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.schlangen.redditapplication.data.HomeViewModel
 import dev.schlangen.redditapplication.data.Recipe
-import dev.schlangen.redditapplication.ui.theme.Purple40
 import dev.schlangen.redditapplication.ui.widgets.CheckboxWidget
 import dev.schlangen.redditapplication.ui.widgets.RecipeWidget
 
@@ -97,11 +95,10 @@ fun HomeContent(
             )
         }
         Spacer(modifier = Modifier.height(36.dp))
-        Box(
-            Modifier
-                .background(color = Purple40)
-                .align(Alignment.CenterHorizontally)
-                .clickable { onRefreshMeals() } ) {
+        Button(
+            onClick = { onRefreshMeals() },
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        ) {
             Text("New Recipe",
                 modifier = Modifier.padding(all = 20.dp),
                 color = Color.White
